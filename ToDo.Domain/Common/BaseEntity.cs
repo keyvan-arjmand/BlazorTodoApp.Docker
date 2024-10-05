@@ -4,6 +4,6 @@ namespace ToDo.Domain.Common;
 
 public class BaseEntity
 {
-    [Key] public string Id { get; set; } = string.Empty;
+    [Key] public int Id { get; set; }
     public bool IsDelete { get; set; } = false;
 }

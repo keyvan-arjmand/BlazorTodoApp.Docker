@@ -10,4 +10,8 @@
       <ProjectReference Include="..\ToDo.Application\ToDo.Application.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="xunit.assert" Version="2.9.2" />
+    </ItemGroup>
+
 </Project>

@@ -34,6 +34,7 @@
     <ItemGroup>
       <ProjectReference Include="..\ToDo.Application\ToDo.Application.csproj" />
       <ProjectReference Include="..\ToDo.Domain\ToDo.Domain.csproj" />
+      <ProjectReference Include="..\ToDo.Infrastructure\ToDo.Infrastructure.csproj" />
     </ItemGroup>
 
 </Project>
