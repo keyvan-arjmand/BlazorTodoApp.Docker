@@ -1,0 +1,17 @@
+﻿@inject NavigationManager Navigation
+<button class="btn btn-primary w-100" type="button" @onclick="NavigateToUrl">
+    @LinkText
+</button>
+
+@code {
+    [Parameter]
+    public string Url { get; set; }= "/";
+
+    [Parameter]
+    public string LinkText { get; set; } = "Navigation";
+
+    private void NavigateToUrl()
+    {
+        Navigation.NavigateTo(Url);
+    }
+}
