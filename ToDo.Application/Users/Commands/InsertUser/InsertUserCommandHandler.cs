@@ -24,8 +24,11 @@ public class InsertUserCommandHandler : IRequestHandler<InsertUserCommand, ApiRe
             UserName = request.PhoneNumber,
             SecurityStamp = string.Empty,
             PhoneNumberConfirmed = true,
+            EmailConfirmed = true,
+            
         };
-        await _userManager.AddPasswordAsync(user, request.Pass);
+        await _userManager.CreateAsync(user, request.Pass);
+        await _userManager.AddToRoleAsync(user, "User");
         return new ApiResult(string.Empty, ApiResultStatusCode.Success, true);
     }
 }

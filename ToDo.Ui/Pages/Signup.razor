@@ -1,0 +1,48 @@
+﻿@page "/signup"
+@using MediatR
+@using ToDo.Application.Users.Commands.InsertUser
+
+<div class="login-box">
+    <div class="login-logo">
+        <a>
+            <b>ثبت نام</b>
+        </a>
+    </div>
+    <div class="card">
+        <div class="card-body login-card-body">
+            <p class="login-box-msg">فرم زیر را تکمیل کنید</p>
+
+            <form>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" placeholder="شماره تماس" required="required" @bind="PhoneNumber"/>
+                    <div class="input-group-append">
+                        <span class="fa fa-envelope input-group-text"></span>
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" placeholder="نام" required="required" @bind="Name"/>
+                    <div class="input-group-append">
+                        <span class="fa fa-lock input-group-text"></span>
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" placeholder="نام خانوادگی" required="required" @bind="Family"/>
+                    <div class="input-group-append">
+                        <span class="fa fa-lock input-group-text"></span>
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <input type="password" class="form-control" placeholder="رمز عبور" required="required" @bind="Password"/>
+                    <div class="input-group-append">
+                        <span class="fa fa-lock input-group-text"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <button type="button" class="btn btn-primary w-100" @onclick="RegisterUser">ثبت نام در سایت</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
