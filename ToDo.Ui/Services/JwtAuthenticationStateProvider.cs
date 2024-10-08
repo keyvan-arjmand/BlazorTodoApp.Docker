@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using System.Text.Json;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.JSInterop;
@@ -9,19 +10,20 @@ namespace ToDo.Ui.Services;
 public class JwtAuthenticationStateProvider : AuthenticationStateProvider
 {
     private readonly ProtectedSessionStorage _protectedSessionStorage;
-
-    public JwtAuthenticationStateProvider(ProtectedSessionStorage protectedSessionStorage)
+    private readonly IJSRuntime JsRuntime;
+    public JwtAuthenticationStateProvider(ProtectedSessionStorage protectedSessionStorage, IJSRuntime jsRuntime)
     {
         _protectedSessionStorage = protectedSessionStorage;
+        JsRuntime = jsRuntime;
     }
 
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
-        var token =  await _protectedSessionStorage.GetAsync<string>("token");
+        var token =  await JsRuntime.InvokeAsync<string>("localStorage.getItem", "token");
     
-        var user = string.IsNullOrEmpty(token.Value) 
+        var user = string.IsNullOrEmpty(token) 
             ? new ClaimsPrincipal(new ClaimsIdentity())
-            : new ClaimsPrincipal(new ClaimsIdentity(ParseClaimsFromJwt(token.Value), "jwt"));
+            : new ClaimsPrincipal(new ClaimsIdentity(ParseClaimsFromJwt(token), "jwt"));
  
         return new AuthenticationState(user);
     }
