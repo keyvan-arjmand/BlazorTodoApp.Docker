@@ -5,7 +5,7 @@ using Xunit;
 
 namespace ToDo.Infrastructure.Repositories;
 
-public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
+public class GenericRepository<T> : IGenericRepository<T> where T :  BaseEntity
 {
     private readonly DbContext _dbContext;
     public DbSet<T> Entities { get; }

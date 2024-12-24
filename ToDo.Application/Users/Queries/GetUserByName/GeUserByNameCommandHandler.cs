@@ -18,7 +18,7 @@ public class GeUserByNameCommandHandler : IRequestHandler<GeUserByNameCommand, A
 
     public async Task<ApiResult<UserDto>> Handle(GeUserByNameCommand request, CancellationToken cancellationToken)
     {
-        var user = await _userManager.Users.Include(x => x.ToDoList)
+        var user = await _userManager.Users.AsNoTracking().Include(x => x.ToDoList)
             .FirstOrDefaultAsync(x => x.UserName == request.PhoneNumber, cancellationToken: cancellationToken);
         return new ApiResult<UserDto>(user!.ToDto<UserDto>(), string.Empty, ApiResultStatusCode.Success, true);
     }

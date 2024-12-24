@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text.Json;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -11,6 +12,7 @@ public class JwtAuthenticationStateProvider : AuthenticationStateProvider
 {
     private readonly ProtectedSessionStorage _protectedSessionStorage;
     private readonly IJSRuntime JsRuntime;
+
     public JwtAuthenticationStateProvider(ProtectedSessionStorage protectedSessionStorage, IJSRuntime jsRuntime)
     {
         _protectedSessionStorage = protectedSessionStorage;
@@ -19,12 +21,47 @@ public class JwtAuthenticationStateProvider : AuthenticationStateProvider
 
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
-        var token =  await JsRuntime.InvokeAsync<string>("localStorage.getItem", "token");
-    
-        var user = string.IsNullOrEmpty(token) 
-            ? new ClaimsPrincipal(new ClaimsIdentity())
-            : new ClaimsPrincipal(new ClaimsIdentity(ParseClaimsFromJwt(token), "jwt"));
- 
+        var token = await JsRuntime.InvokeAsync<string>("localStorage.getItem", "token");
+
+        ClaimsPrincipal user;
+
+        if (string.IsNullOrEmpty(token))
+        {
+            user = new ClaimsPrincipal(new ClaimsIdentity());
+        }
+        else
+        {
+            try
+            {
+                var handler = new JwtSecurityTokenHandler();
+                var jwtToken = handler.ReadJwtToken(token);
+
+                var claims = new List<Claim>
+                {
+                    new Claim(JwtRegisteredClaimNames.Sub,
+                        jwtToken.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)?.Value ??
+                        string.Empty),
+                    new Claim(JwtRegisteredClaimNames.NameId,
+                        jwtToken.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.NameId)?.Value ??
+                        string.Empty)
+                };
+
+                var roles = jwtToken.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
+                foreach (var role in roles)
+                {
+                    claims.Add(new Claim(ClaimTypes.Role, role));
+                }
+
+                var identity = new ClaimsIdentity(claims, "jwt");
+
+                user = new ClaimsPrincipal(identity);
+            }
+            catch (Exception)
+            {
+                user = new ClaimsPrincipal(new ClaimsIdentity());
+            }
+        }
+
         return new AuthenticationState(user);
     }
 
@@ -40,9 +77,14 @@ public class JwtAuthenticationStateProvider : AuthenticationStateProvider
     {
         switch (base64.Length % 4)
         {
-            case 2: base64 += "=="; break;
-            case 3: base64 += "="; break;
+            case 2:
+                base64 += "==";
+                break;
+            case 3:
+                base64 += "=";
+                break;
         }
+
         return Convert.FromBase64String(base64);
     }
 }

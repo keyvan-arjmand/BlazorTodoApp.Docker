@@ -41,9 +41,19 @@ public static class MapperExtensions
         return _mapper!.Map<T>(model);
     }
 
+    public static T ToDto<T>(this IdentityRole<int> model) where T : class, new()
+    {
+        return _mapper!.Map<T>(model);
+    }
+
     public static T ToDto<T>(this User model) where T : class
     {
         return _mapper!.Map<T>(model);
+    }
+
+    public static IEnumerable<T> ToDto<T>(this IEnumerable<IdentityRole<int>> model) where T : class, new()
+    {
+        return _mapper!.Map<IEnumerable<T>>(model);
     }
 
     public static IEnumerable<T> ToDto<T>(this IEnumerable<BaseEntity> model) where T : class, new()

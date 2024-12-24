@@ -18,6 +18,14 @@ public partial class Signup
 
     private async Task RegisterUser()
     {
+        var tokenEx = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "token");
+
+        if (!string.IsNullOrEmpty(tokenEx))
+        {
+            Navigation.NavigateTo("/", true);
+            return;
+        }
+
         try
         {
             await JSRuntime.InvokeVoidAsync("Notiflix.Loading.circle", "در حال پردازش ...");
@@ -33,7 +41,7 @@ public partial class Signup
             {
                 ShowSuccess();
                 await JSRuntime.InvokeVoidAsync("Notiflix.Loading.remove");
-                Navigation.NavigateTo("/login",true);
+                Navigation.NavigateTo("/login", true);
             }
             else
             {
